@@ -25,7 +25,7 @@ exports.managerLogin = async (req, res) => {
           // /**if password mismatch */
       if (managerExist.data[0].password !== sha256(req.body.password)) {
           return res.status(403).send({
-          message: "login Failed due to incorrect email or password",
+          message: "Login Failed Due to Incorrect email or password",
           status: false,
         });
       }
@@ -64,27 +64,21 @@ exports.registerManager = async (req, res) => {
         dob: req.body.dob,
         password: sha256(req.body.password),
       }
-    var schemaPayload = managerService.saveManagerValue(createmanagerPayload)
-      .then((response) => {
-        res.status(201).send({
-          message: "Created Manager ",
-          status: true,
-        });
-      })
-      .catch((error) => {
-        if (error.message.includes("validation failed")) {
-          res.status(400).send({
-            message: error.message.toString().split(':').slice(1).join(':'),
-            status: false,
-          });
-        } else {
-          res.status(500).send({
-            message:
-              error.message ||
-              "Some error occurred while Adding Manager.",
-          });
-        }
+    var schemaPayload = await managerService.saveManagerValue(createmanagerPayload)
+    if(schemaPayload.status){
+      res.status(201).send({
+        message: "Created Manager ",
+        status: true,
       });
+    }
+
+    if(schemaPayload.status == false && schemaPayload.message.includes('validation failed')){
+      res.status(401).send({
+        message: "Record Already Exist",
+        status: false,
+      });
+    }
+    
   } catch (error) {
     res.status(500).send({ errorMessage: error.message });
   }
