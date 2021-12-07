@@ -11,9 +11,14 @@ exports.addEmployees = async (req, res) => {
          "message": "Employee Added Successfully",
          "status" : true 
         });
+    }else if(result.status == false && result.message.includes('already exists')){
+      res.status(401).send({
+        message: "Record Already Exists",
+        status: false,
+      });
     }else{
       return res.status(500).send({
-        "message": "Something Went Wrong",
+        "message": result.message,
         "status" : false 
        });
     }
