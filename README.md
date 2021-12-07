@@ -1,0 +1,1 @@
+* Please note to use npm i before running the project and the use nodemon start to run the project
